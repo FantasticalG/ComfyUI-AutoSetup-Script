@@ -10,6 +10,10 @@ folders:
     source: civitai
     ids:
       -  1236430 # realism lora by stable yogi
+  - target: models/upscale_models
+    source: huggingface
+    urls:
+      - https://huggingface.co/LS110824/upscale/resolve/main/4xLSDIR.pth
 
 # QWEN Image Edit 2509
   - target: models/vae/qwen2509
