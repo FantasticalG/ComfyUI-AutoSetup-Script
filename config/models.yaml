@@ -1,0 +1,78 @@
+# Define folders and their download URLs
+folders:
+
+# SDXL
+  - target: models/checkpoints/sdxl
+    source: huggingface
+    urls:
+      - https://huggingface.co/SG161222/RealVisXL_V5.0/resolve/main/RealVisXL_V5.0_fp32.safetensors
+  - target: models/loras/sdxl
+    source: civitai
+    ids:
+      -  1236430 # realism lora by stable yogi
+  - target: models/upscale_models
+    source: huggingface
+    urls:
+      - https://huggingface.co/LS110824/upscale/resolve/main/4xLSDIR.pth
+
+# QWEN Image Edit 2509
+  - target: models/vae/qwen2509
+    source: huggingface
+    urls:
+      - https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/vae/qwen_image_vae.safetensors
+  - target: models/text_encoders/qwen2509
+    source: huggingface
+    urls:
+      - https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors
+  - target: models/diffusion_models/qwen2509
+    source: huggingface
+    urls:
+      - https://huggingface.co/Comfy-Org/Qwen-Image-Edit_ComfyUI/resolve/main/split_files/diffusion_models/qwen_image_edit_2509_fp8_e4m3fn.safetensors
+  - target: models/loras/qwen2509
+    source: huggingface
+    urls:
+      - https://huggingface.co/lightx2v/Qwen-Image-Lightning/resolve/main/Qwen-Image-Edit-2509/Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors
+
+# WAN2.2 General
+  - target: models/vae/wan22
+    source: huggingface
+    urls:
+      - https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors
+  - target: models/text_encoders/wan22
+    source: huggingface
+    urls:
+      - https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors
+  - target: models/clip_vision/wan22
+    source: huggingface
+    urls:
+      - https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors
+  - target: models/diffusion_models/wan22
+    source: huggingface
+    urls:
+      - https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_i2v_high_noise_14B_fp8_scaled.safetensors
+  - target: models/diffusion_models/wan22
+    source: huggingface
+    urls:
+      - https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_i2v_low_noise_14B_fp8_scaled.safetensors
+  - target: models/loras/wan22
+    source: huggingface
+    urls:
+      - https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/wan2.2_i2v_lightx2v_4steps_lora_v1_high_noise.safetensors
+  - target: models/loras/wan22
+    source: huggingface
+    urls:
+      - https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/wan2.2_i2v_lightx2v_4steps_lora_v1_low_noise.safetensors
+      
+# WAN2.2 Animate
+  - target: models/diffusion_models/wan22
+    source: huggingface
+    urls:
+      - https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled/resolve/main/Wan22Animate/Wan2_2-Animate-14B_fp8_e4m3fn_scaled_KJ.safetensors
+  - target: models/loras/wan22
+    source: huggingface
+    urls:
+      - https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/LoRAs/Wan22_relight/WanAnimate_relight_lora_fp16.safetensors
+  - target: models/loras/wan22
+    source: huggingface
+    urls:
+      - https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Lightx2v/lightx2v_I2V_14B_480p_cfg_step_distill_rank64_bf16.safetensors

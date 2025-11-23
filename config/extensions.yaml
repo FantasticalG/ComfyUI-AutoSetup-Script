@@ -1,0 +1,7 @@
+# List of ComfyUI extensions to install.
+# Each entry only needs a Git URL.
+extensions:
+
+# General
+  - url: https://github.com/Comfy-Org/ComfyUI-Manager.git  # ComfyUI Manager
+  - url: https://github.com/ty0x2333/ComfyUI-Dev-Utils.git # ComfyUI Dev Utils (Execution Time Analysis)

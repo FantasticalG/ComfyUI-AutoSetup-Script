@@ -1,0 +1,9 @@
+# Copy or merge complete folders from setup repo → ComfyUI installation
+# Each entry maps a local source dir to a target dir (relative to comfy root)
+folders:
+  - source: resources/workflows
+    target: user/default/workflows/custom
+    mode: symlink      # use symlink instead of copying
+#  - source: resources/models
+#    target: models
+#    mode: copy         # default is copy if omitted
