@@ -2,7 +2,7 @@
 # Each entry maps a local source dir to a target dir (relative to comfy root)
 folders:
   - source: resources/workflows
-    target: user/default/workflows/custom
+    target: user/default/workflows/Fantastical
     mode: symlink      # use symlink instead of copying
 #  - source: resources/models
 #    target: models
