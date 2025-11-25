@@ -3,8 +3,12 @@
 extensions:
 
 # General
-  - url: https://github.com/Comfy-Org/ComfyUI-Manager.git        # ComfyUI Manager
-  - url: https://github.com/ty0x2333/ComfyUI-Dev-Utils.git       # ComfyUI Dev Utils (Execution Time Analysis)
-  - url: https://github.com/rgthree/rgthree-comfy.git            # Utility nodes like Seed, Image Compare, Group Bypass, ...
-  - url: https://github.com/evanspearman/ComfyMath.git           # Bool logic, int/float arithmetic
-  - url: https://github.com/bradsec/ComfyUI_StringEssentials.git # String textbox, strip, replace, preview 
+  - url: https://github.com/Comfy-Org/ComfyUI-Manager.git                        # ComfyUI Manager
+  - url: https://github.com/ty0x2333/ComfyUI-Dev-Utils.git                       # ComfyUI Dev Utils (Execution Time Analysis)
+  - url: https://github.com/rgthree/rgthree-comfy.git                            # Utility nodes like Seed, Image Compare, Group Bypass, ...
+  - url: https://github.com/StableLlama/ComfyUI-basic_data_handling.git          # Type handling, math operations, ..
+  - url: https://github.com/Tropfchen/ComfyUI-yaResolutionSelector.git           # Resolution selector
+
+# Video
+  - url: https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git   # Advanced load/save video nodes
+  - url: https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git # RIFE frame interpolation

@@ -1,6 +1,22 @@
 # Define folders and their download URLs
 folders:
 
+# Upscale Models      
+  - target: models/upscale_models
+    source: huggingface
+    urls:
+      - https://huggingface.co/LS110824/upscale/resolve/main/4xLSDIR.pth
+
+# Lotus Depth
+  - target: models/vae/lotus_depth
+    source: huggingface
+    urls:
+      - https://huggingface.co/stabilityai/sd-vae-ft-mse-original/resolve/main/vae-ft-mse-840000-ema-pruned.safetensors
+  - target: models/diffusion_models/lotus_depth
+    source: huggingface
+    urls:
+      - https://huggingface.co/Comfy-Org/lotus/resolve/main/lotus-depth-d-v1-1.safetensors    
+
 # SDXL
   - target: models/checkpoints/sdxl
     source: huggingface
@@ -9,29 +25,39 @@ folders:
   - target: models/loras/sdxl
     source: civitai
     ids:
-      -  1236430 # realism lora by stable yogi
-  - target: models/upscale_models
-    source: huggingface
-    urls:
-      - https://huggingface.co/LS110824/upscale/resolve/main/4xLSDIR.pth
+      - 1236430 # realism lora by stable yogi
+      - 1364069 # log color lora -  cinematic film style, Cineon, cinematic film stocks, raw
 
-# QWEN Image Edit 2509
-  - target: models/vae/qwen2509
+# QWEN Image
+  - target: models/vae/qwen
     source: huggingface
     urls:
       - https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/vae/qwen_image_vae.safetensors
-  - target: models/text_encoders/qwen2509
+  - target: models/text_encoders/qwen
     source: huggingface
     urls:
       - https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors
-  - target: models/diffusion_models/qwen2509
+  - target: models/diffusion_models/qwen
     source: huggingface
     urls:
+      - https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/diffusion_models/qwen_image_fp8_e4m3fn.safetensors               
       - https://huggingface.co/Comfy-Org/Qwen-Image-Edit_ComfyUI/resolve/main/split_files/diffusion_models/qwen_image_edit_2509_fp8_e4m3fn.safetensors
-  - target: models/loras/qwen2509
+  - target: models/loras/qwen
     source: huggingface
     urls:
+      - https://huggingface.co/lightx2v/Qwen-Image-Lightning/resolve/main/Qwen-Image-Lightning-4steps-V1.0.safetensors             
       - https://huggingface.co/lightx2v/Qwen-Image-Lightning/resolve/main/Qwen-Image-Edit-2509/Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors
+  - target: models/controlnet/qwen
+    source: huggingface
+    urls:
+      - https://huggingface.co/Comfy-Org/Qwen-Image-InstantX-ControlNets/resolve/main/split_files/controlnet/Qwen-Image-InstantX-ControlNet-Union.safetensors
+  - target: models/loras/qwen
+    source: civitai
+    ids:
+      - 2424051 # flat log color lora - flatcolor Desaturate the image and lower the contrast to create a flat, ungraded look similar to a camera's log profile. Preserve details in the highlights and shadows
+      - 2337354 # cinematic lora - in elusarca style, a movie still, cinematic
+      - 2416596 # skin detailer lora
+      - 2181911 # boring reality lora
 
 # WAN2.2 General
   - target: models/vae/wan22
@@ -62,7 +88,7 @@ folders:
     source: huggingface
     urls:
       - https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/wan2.2_i2v_lightx2v_4steps_lora_v1_low_noise.safetensors
-      
+
 # WAN2.2 Animate
   - target: models/diffusion_models/wan22
     source: huggingface
