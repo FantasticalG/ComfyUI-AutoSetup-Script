@@ -30,7 +30,7 @@ while IFS= read -r url; do
   # Remove partial/broken clone folders
   if [ -d "$target" ] && [ ! -d "$target/.git" ]; then
     log "[COMFYUI AUTO SETUP] Removing incomplete clone at $target"
-    rm -rf "$TARGET_DIR"
+    rm -rf "$target"
   fi
 
   # Clone if not checked out yet

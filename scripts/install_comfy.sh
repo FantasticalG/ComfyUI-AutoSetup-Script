@@ -13,6 +13,12 @@ COMFY_REPO="https://github.com/comfyanonymous/ComfyUI.git"
 
 log "Installing/Updating ComfyUI..."
 
+# Remove partial/broken ComfyUI folder
+if [ -d "$INSTALL_DIR" ] && [ ! -d "$INSTALL_DIR/.git" ]; then
+  log "[COMFYUI AUTO SETUP] Removing incomplete clone at $INSTALL_DIR"
+  rm -rf "$INSTALL_DIR"
+fi
+
 # Clone if not installed yet
 if [ ! -d "$INSTALL_DIR/.git" ]; then
   git clone "$COMFY_REPO" "$INSTALL_DIR"
