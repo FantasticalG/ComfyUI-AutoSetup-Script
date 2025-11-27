@@ -26,6 +26,14 @@ while IFS= read -r url; do
   log "Setting up extension: $name"
 
   target="$EXT_DIR/$name"
+
+  # Remove partial/broken clone folders
+  if [ -d "$target" ] && [ ! -d "$target/.git" ]; then
+    log "[COMFYUI AUTO SETUP] Removing incomplete clone at $target"
+    rm -rf "$TARGET_DIR"
+  fi
+
+  # Clone if not checked out yet
   if [ ! -d "$target/.git" ]; then
     git clone "$url" "$target"
   fi
@@ -41,6 +49,8 @@ while IFS= read -r url; do
         | awk '!/already satisfied/' # skip already satisfied warning
     } >&2
   fi
+
+  log "$name ready @ $commit"
 
 done <<< "$EXT_URLS"
 
