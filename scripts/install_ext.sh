@@ -35,7 +35,7 @@ while IFS= read -r url; do
 
   # Clone if not checked out yet
   if [ ! -d "$target/.git" ]; then
-    git clone "$url" "$target"
+    git clone --depth 1 "$url" "$target"
   fi
 
   # Check out target commit based on the setup date
