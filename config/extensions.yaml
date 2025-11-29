@@ -9,6 +9,9 @@ extensions:
   - url: https://github.com/StableLlama/ComfyUI-basic_data_handling.git          # Type handling, math operations, ..
   - url: https://github.com/Tropfchen/ComfyUI-yaResolutionSelector.git           # Resolution selector
 
+# Image
+  - url: https://github.com/ssitu/ComfyUI_UltimateSDUpscale.git # Ultimate SD Upscale
+
 # Video
   - url: https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git   # Advanced load/save video nodes
   - url: https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git # RIFE frame interpolation
