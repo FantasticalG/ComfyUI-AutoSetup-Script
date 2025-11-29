@@ -26,7 +26,7 @@ folders:
     source: civitai
     ids:
       - 1236430 # realism lora by stable yogi
-      - 1364069 # log color lora -  cinematic film style, Cineon, cinematic film stocks, raw
+      - 1364069 # log color lora -  cinematic film style, Cineon, cinematic film stocks, raw (model id 1208803)
 
 # QWEN Image
   - target: models/vae/qwen
@@ -54,10 +54,10 @@ folders:
   - target: models/loras/qwen
     source: civitai
     ids:
-      - 2424051 # flat log color lora - flatcolor
-      - 2337354 # cinematic lora - in elusarca style, a movie still, cinematic
-      - 2416596 # skin detailer lora
-      - 2181911 # boring reality lora
+      - 2424051 # EDIT flatlogcolor lora - flatcolor desaturate the image and lower the contrast to create a flat, ungraded look similar to a camera's log profile. Preserve details in the highlights and shadows (model id 2143109)
+      - 2337354 # IMAGE cinematic lora - in elusarca style, a movie still, cinematic
+      - 2416596 # IMAGE skin detailer lora
+      - 2181911 # IMAGE boring reality lora
 
 # WAN2.2 General
   - target: models/vae/wan22
