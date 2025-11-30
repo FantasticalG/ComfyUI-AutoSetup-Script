@@ -21,7 +21,7 @@ fi
 
 # Clone if not installed yet
 if [ ! -d "$INSTALL_DIR/.git" ]; then
-  git clone --depth 1 "$COMFY_REPO" "$INSTALL_DIR"
+  git clone "$COMFY_REPO" "$INSTALL_DIR"
 fi
 
 # Check out target commit based on the setup date
