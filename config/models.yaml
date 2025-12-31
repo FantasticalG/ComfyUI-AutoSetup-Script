@@ -41,12 +41,12 @@ folders:
     source: huggingface
     urls:
       - https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/diffusion_models/qwen_image_fp8_e4m3fn.safetensors               
-      - https://huggingface.co/Comfy-Org/Qwen-Image-Edit_ComfyUI/resolve/main/split_files/diffusion_models/qwen_image_edit_2509_fp8_e4m3fn.safetensors
+      - https://huggingface.co/Comfy-Org/Qwen-Image-Edit_ComfyUI/resolve/main/split_files/diffusion_models/qwen_image_edit_2511_bf16.safetensors
   - target: models/loras/qwen
     source: huggingface
     urls:
       - https://huggingface.co/lightx2v/Qwen-Image-Lightning/resolve/main/Qwen-Image-Lightning-4steps-V1.0.safetensors             
-      - https://huggingface.co/lightx2v/Qwen-Image-Lightning/resolve/main/Qwen-Image-Edit-2509/Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors
+      - https://huggingface.co/lightx2v/Qwen-Image-Edit-2511-Lightning/resolve/main/Qwen-Image-Edit-2511-Lightning-4steps-V1.0-bf16.safetensors
       - https://huggingface.co/flymy-ai/qwen-image-realism-lora/resolve/main/flymy_realism.safetensors # IMAGE realism lora - realism
   - target: models/controlnet/qwen
     source: huggingface
@@ -59,6 +59,25 @@ folders:
       - 2337354 # IMAGE cinematic lora - in elusarca style, a movie still, cinematic
       - 2416596 # IMAGE skin detailer lora
       - 2181911 # IMAGE boring reality lora
+
+# Z-Image
+  # - target: models/vae/zimage
+  #   source: huggingface
+  #   urls:
+  #     - https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/vae/ae.safetensors
+  # - target: models/text_encoders/zimage
+  #   source: huggingface
+  #   urls:
+  #     - https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/text_encoders/qwen_3_4b.safetensors
+  # - target: models/diffusion_models/zimage
+  #   source: huggingface
+  #   urls:
+  #     - https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/diffusion_models/z_image_turbo_bf16.safetensors
+  # - target: models/model_patches/zimage
+  #   source: huggingface 
+  #   urls:
+  #     - https://huggingface.co/alibaba-pai/Z-Image-Turbo-Fun-Controlnet-Union/resolve/main/Z-Image-Turbo-Fun-Controlnet-Union.safetensors    
+
 
 # WAN2.2 General
   - target: models/vae/wan22
