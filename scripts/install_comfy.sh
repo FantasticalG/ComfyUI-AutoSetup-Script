@@ -9,7 +9,7 @@ set -e
 source "$(dirname "$0")/helper/lib_common.sh"
 
 ensure_git; ensure_python
-COMFY_REPO="https://github.com/comfyanonymous/ComfyUI.git"
+COMFY_REPO="https://github.com/comfyanonymous/ComfyUI.git" # to be replaced by https://github.com/comfyorg/comfyui
 
 log "Installing/Updating ComfyUI..."
 
