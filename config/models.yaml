@@ -18,15 +18,15 @@ folders:
       - https://huggingface.co/Comfy-Org/lotus/resolve/main/lotus-depth-d-v1-1.safetensors    
 
 # SDXL
-  - target: models/checkpoints/sdxl
-    source: huggingface
-    urls:
-      - https://huggingface.co/SG161222/RealVisXL_V5.0/resolve/main/RealVisXL_V5.0_fp32.safetensors
-  - target: models/loras/sdxl
-    source: civitai
-    ids:
-      - 1236430 # realism lora by stable yogi
-      - 1364069 # log color lora -  cinematic film style, Cineon, cinematic film stocks, raw (model id 1208803)
+  # - target: models/checkpoints/sdxl
+  #   source: huggingface
+  #   urls:
+  #     - https://huggingface.co/SG161222/RealVisXL_V5.0/resolve/main/RealVisXL_V5.0_fp32.safetensors
+  # - target: models/loras/sdxl
+  #   source: civitai
+  #   ids:
+  #     - 1236430 # realism lora by stable yogi
+  #     - 1364069 # log color lora -  cinematic film style, Cineon, cinematic film stocks, raw (model id 1208803)
 
 # QWEN Image
   - target: models/vae/qwen
@@ -59,7 +59,11 @@ folders:
       - 2337354 # IMAGE cinematic lora - in elusarca style, a movie still, cinematic
       - 2416596 # IMAGE skin detailer lora
       - 2181911 # IMAGE boring reality lora
-
+  - target: models/loras/qwen 
+    source: huggingface
+    urls:
+      - https://huggingface.co/dx8152/Qwen-Image-Edit-2509-Relight/resolve/main/Qwen-Edit-Relight.safetensors 
+  
 # Z-Image
   # - target: models/vae/zimage
   #   source: huggingface
