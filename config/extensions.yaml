@@ -10,6 +10,11 @@ extensions:
   - url: https://github.com/Tropfchen/ComfyUI-yaResolutionSelector.git           # Resolution selector
   - url: https://github.com/yolain/ComfyUI-Easy-Use.git                          # Utility Nodes like Clear Cache
 
+# Preprocessor / Segmentation / WAN Animate
+  - url: https://github.com/Fannovel16/comfyui_controlnet_aux.git                # Control Net Preprocessors
+  - url: https://github.com/kijai/ComfyUI-segment-anything-2.git                 # Mask Segmentation
+  - url: https://github.com/kijai/ComfyUI-KJNodes                                # Various Quality of Life and maksing nodes
+
 # Image
   - url: https://github.com/ssitu/ComfyUI_UltimateSDUpscale.git # Ultimate SD Upscale
 
