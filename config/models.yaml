@@ -150,3 +150,13 @@ folders:
     urls:
       - https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Lightx2v/lightx2v_I2V_14B_480p_cfg_step_distill_rank64_bf16.safetensors
       - https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/LoRAs/Wan22_relight/WanAnimate_relight_lora_fp16.safetensors
+
+# MMAudio
+  - target: models/mmaudio
+    source: huggingface
+    urls: 
+      - https://huggingface.co/Kijai/MMAudio_safetensors/resolve/main/apple_DFN5B-CLIP-ViT-H-14-384_fp32.safetensors
+      - https://huggingface.co/Kijai/MMAudio_safetensors/resolve/main/mmaudio_large_44k_v2_fp32.safetensors
+      - https://huggingface.co/Kijai/MMAudio_safetensors/resolve/main/mmaudio_synchformer_fp32.safetensors
+      - https://huggingface.co/Kijai/MMAudio_safetensors/resolve/main/mmaudio_vae_44k_fp32.safetensors
+
