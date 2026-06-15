@@ -50,7 +50,7 @@ scripts/
 | CIVITAI_API_KEY | Token for model downloads |
 | HUGGINGFACE_API_KEY | Token for HF download |
 
-- API keys can also be stored in a local config file `local/local_keys.yaml`. The `local/` folder is git-ignored and kept private.
+- API keys can also be stored in a local config file in  folder `local/local_keys.yaml` relative to the current shell directory `$PWD`. 
 ```bash
 huggingface: "YOUR_KEY"
 civitai: "YOUR_KEY"

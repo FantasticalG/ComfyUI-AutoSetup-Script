@@ -19,7 +19,7 @@ COMMIT_DATE=$(git -C "$REPO_ROOT" log -1 --format=%ci | cut -d' ' -f1)
 SETUP_DATE="${TARGET_DATE:-$COMMIT_DATE}" 
 
 # Installation directory (can be overridden with COMFY_DIR)
-INSTALL_DIR="${COMFY_DIR:-$REPO_ROOT/ComfyUI}"
+INSTALL_DIR="${COMFY_DIR:-$PWD/ComfyUI}"
 
 # Api Keys (can be overriden with HUGGINGFACE_API_KEY and CIVITAI_API_KEY)
 HF_KEY="${HUGGINGFACE_API_KEY:-}"

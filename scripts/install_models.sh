@@ -10,7 +10,7 @@ source "$(dirname "$0")/helper/lib_common.sh"
 ensure_python
 
 CONFIG_FILE="$REPO_ROOT/config/models.yaml"
-LOCAL_KEYS_FILE="$REPO_ROOT/local/local_keys.yaml"
+LOCAL_KEYS_FILE="$PWD/local/local_keys.yaml"
 
 log "Installing models"
 
