@@ -5,7 +5,9 @@
 # Shared library for env setup, parameter handling, helpers
 # -----------------------------------------------------------
 
-set -e
+# pipefail so a failing command in a pipe (e.g. `pip install ... | awk`)
+# is not masked by the exit status of the last pipe stage.
+set -eo pipefail
 
 # Helper function for logging
 log() { echo -e "[COMFY AUTO SETUP] $*"; }
@@ -35,6 +37,15 @@ while [[ "$#" -gt 0 ]]; do
     esac
     shift
 done
+
+# Re-export the resolved values as the canonical env vars. install_all.sh
+# launches the step scripts as separate `bash` processes that re-source this
+# file, so without exporting these the children would fall back to defaults and
+# silently drop any CLI flags (--comfy-dir, --date, --hf-key, --civitai-key).
+export COMFY_DIR="$INSTALL_DIR"
+export TARGET_DATE="$SETUP_DATE"
+export HUGGINGFACE_API_KEY="$HF_KEY"
+export CIVITAI_API_KEY="$CIVITAI_KEY"
 
 # Dependency checks (base system expected to have git/python preinstalled)
 ensure_git() { command -v git >/dev/null || { log "git missing"; exit 1; }; }
