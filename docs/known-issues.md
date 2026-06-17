@@ -75,5 +75,3 @@ command-line arguments to the Python helper, so they can appear in process listi
 - **Workflows symlink to `/opt/setup`** (ephemeral, re-cloned each boot) rather than the persistent
   volume. Works today because the entrypoint always re-clones, but fragile if that assumption
   changes.
-- **`docker-compose.yaml` uses obsolete `version: "3.9"`** — ignored with a warning by modern
-  Compose; can be removed.

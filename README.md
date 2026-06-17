@@ -20,6 +20,7 @@ A lightweight, config-driven installation system that builds a complete, reprodu
 ## Prerequisites
 
 - `git` and `python3` (with `pip`) on `PATH` — the scripts check for these and exit early if missing.
+- **Python ≥ 3.11** (3.12 recommended). Current ComfyUI requirements pin packages such as `av>=16.0.0` that require Python ≥ 3.11. If you use a venv, create it from a new-enough interpreter, e.g. `python3.12 -m venv .venv`.
 - `bash`.
 - For GPU inference, a working CUDA + PyTorch environment. This script installs ComfyUI's Python requirements but does **not** install a CUDA build of PyTorch — provide that yourself (a venv is recommended), or use the [container](https://github.com/FantasticalG/ComfyUI-AutoSetup-RunPod-Container), which sets it up for you.
 - Enough disk space for the model families you enable (the defaults pull several large diffusion models — tens of GB).
@@ -133,7 +134,7 @@ See [docs/workflows.md](docs/workflows.md) for the catalog of bundled workflows.
 | Symptom | Likely cause / fix |
 |---------|--------------------|
 | `git missing` / `python3 missing` | Install the tool and ensure it is on `PATH`. |
-| Re-clone every run / "Removing incomplete clone" | A repo folder exists without `.git`. The script removes and re-clones it automatically; just let it finish. |
+| `'<dir>' exists, is not a git repository, and is not empty` | The install target (ComfyUI dir or an extension folder) points at a populated non-git directory. The script refuses to touch it. Remove or relocate that directory manually, or set a different `--comfy-dir`, then re-run. |
 | `401`/`403` on a download | The file is gated/private, or a CivitAI download needs a token. Provide an API key (see above). |
 | CivitAI download produces a strange filename | The real name comes from the server's `Content-Disposition` header — this is expected. |
 | Model "already exists", not re-downloaded | Existing files are skipped by design. Delete the file to force a re-download. |
