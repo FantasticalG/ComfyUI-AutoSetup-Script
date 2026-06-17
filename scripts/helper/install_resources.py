@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
 
 # --------------------------------------------------------------
-# install_models.py
+# install_resources.py
 # Merge/copy or symlink resource folders into target directory
 # --------------------------------------------------------------
 
 import os, shutil, yaml, sys
+
+
+# --- Logging ---
+def log(msg):
+    print(f"[COMFY AUTO SETUP] {msg}")
+
 
 # --- Args ---
 if len(sys.argv) < 4:
@@ -23,7 +29,7 @@ for item in data.get("folders", []):
     dst_dir = os.path.join(target_root, item["target"])
     mode = item.get("mode", "copy")
 
-    print(f"[COMFY AUTO SETUP] {mode.capitalize()} {src_dir} → {dst_dir}")
+    log(f"{mode.capitalize()} {src_dir} → {dst_dir}")
 
     if mode == "symlink":
         # ensure parent of target exists
@@ -45,5 +51,5 @@ for item in data.get("folders", []):
             dst_sub = os.path.join(dst_dir, rel)
             os.makedirs(dst_sub, exist_ok=True)
             for f in files:
-                print(f"[COMFY AUTO SETUP]  - Copy {f}")
+                log(f" - Copy {f}")
                 shutil.copy2(os.path.join(subdir, f), os.path.join(dst_sub, f))

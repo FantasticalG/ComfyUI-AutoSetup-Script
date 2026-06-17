@@ -29,13 +29,13 @@ CIVITAI_KEY="${CIVITAI_API_KEY:-}"
 
 # Parse command line arguments
 while [[ "$#" -gt 0 ]]; do
-    case "$1" in
-        --comfy-dir) INSTALL_DIR="$2"; shift ;;
-        --date) SETUP_DATE="$2"; shift ;;
-        --hf-key) HF_KEY="$2"; shift ;;
-        --civitai-key) CIVITAI_KEY="$2"; shift ;;
-    esac
-    shift
+  case "$1" in
+    --comfy-dir) INSTALL_DIR="$2"; shift ;;
+    --date) SETUP_DATE="$2"; shift ;;
+    --hf-key) HF_KEY="$2"; shift ;;
+    --civitai-key) CIVITAI_KEY="$2"; shift ;;
+  esac
+  shift
 done
 
 # Re-export the resolved values as the canonical env vars. install_all.sh
@@ -61,15 +61,15 @@ ensure_python() { command -v python3 >/dev/null || { log "python3 missing"; exit
 clone_or_checkout() {
   local url="$1" target="$2" date="$3" commit
 
-  if [ -z "$target" ]; then
+  if [[ -z "$target" ]]; then
     log "clone_or_checkout: empty target path — refusing." >&2
     return 1
   fi
 
   # Clone only when there is no git repo there yet.
-  if [ ! -d "$target/.git" ]; then
+  if [[ ! -d "$target/.git" ]]; then
     # Never touch a populated, non-git directory — abort loudly instead.
-    if [ -d "$target" ] && [ -n "$(ls -A "$target" 2>/dev/null)" ]; then
+    if [[ -d "$target" && -n "$(ls -A "$target" 2>/dev/null)" ]]; then
       log "ERROR: '$target' exists, is not a git repository, and is not empty." >&2
       log "       Refusing to modify it. If it is a stale/partial clone, remove it" >&2
       log "       manually and re-run. (No files were deleted.)" >&2
@@ -81,7 +81,7 @@ clone_or_checkout() {
 
   # Check out the commit matching the setup date.
   commit=$(bash "$REPO_ROOT/scripts/helper/get_commit_for_repo.sh" "$target" "$date")
-  if [ -z "$commit" ]; then
+  if [[ -z "$commit" ]]; then
     log "ERROR: no commit found at/before $date for $target" >&2
     return 1
   fi

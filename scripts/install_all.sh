@@ -5,7 +5,7 @@
 # Installs ComfyUI, Extensions, Resources and Models
 # ----------------------------------------------------
 
-set -e
+set -eo pipefail
 source "$(dirname "$0")/helper/lib_common.sh"
 
 log "TARGET DATE: $SETUP_DATE"

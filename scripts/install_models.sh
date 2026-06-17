@@ -5,7 +5,7 @@
 # Downloads ComfyUI models based on config/models.yaml
 # ----------------------------------------------------------
 
-set -e
+set -eo pipefail
 source "$(dirname "$0")/helper/lib_common.sh"
 ensure_python
 

@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+
+# ------------------------------------------------------------------
+# cuda_check.py
+# Diagnostics: Python / PyTorch versions and CUDA availability/devices
+# ------------------------------------------------------------------
+
 import torch
 import subprocess
 import sys

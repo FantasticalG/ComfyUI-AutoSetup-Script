@@ -7,6 +7,12 @@
 
 import os, sys, yaml, requests, time
 
+
+# --- Logging ---
+def log(msg):
+    print(f"[COMFY AUTO SETUP] {msg}")
+
+
 # --- Args ---
 if len(sys.argv) < 3:
     print("Usage: install_models.py <config.yaml> <install_dir>")
@@ -42,7 +48,7 @@ def download(url, dst_dir, headers, retries=3, step_percent=10):
 
                 dst_path = os.path.join(dst_dir, fname)
                 if os.path.exists(dst_path):
-                    print(f"[COMFY AUTO SETUP] SKIP - {fname} already exists")
+                    log(f"SKIP - {fname} already exists")
                     return dst_path
 
                 # --- Progress bar setup ---
@@ -52,7 +58,7 @@ def download(url, dst_dir, headers, retries=3, step_percent=10):
                 bar_width = 100
                 next_step = step_percent
 
-                print(f"[COMFY AUTO SETUP] DOWN - {fname}")
+                log(f"DOWN - {fname}")
 
                 with open(dst_path, "wb") as f:
                     for chunk in r.iter_content(chunk_size=chunk_size):
@@ -78,10 +84,10 @@ def download(url, dst_dir, headers, retries=3, step_percent=10):
                 if total > 0:
                     sys.stdout.write("\n")
                 else:
-                    print("[COMFY AUTO SETUP]   Done (size unknown)")
+                    log("  Done (size unknown)")
             return dst_path
         except Exception as e:
-            print(f"[COMFY AUTO SETUP] Download failed ({attempt}/{retries}): {e}")
+            log(f"Download failed ({attempt}/{retries}): {e}")
             time.sleep(2)
     return None
 
@@ -94,23 +100,23 @@ for folder in cfg.get("folders", []):
     os.makedirs(target_dir, exist_ok=True)
 
     if src == "huggingface":
-        if not folder.get("urls") is None:
+        if folder.get("urls"):
             for url in folder.get("urls", []):
                 fname = os.path.basename(url)
                 path = os.path.join(target_dir, fname)
                 if os.path.exists(path):
-                    print(f"[COMFY AUTO SETUP] SKIP - {fname} already exists")
+                    log(f"SKIP - {fname} already exists")
                     continue
                 download(url, target_dir, headers)
 
     elif src == "civitai":
-        base =  "https://civitai.com/api/download/models/"
-        if not folder.get("ids") is None:
+        base = "https://civitai.com/api/download/models/"
+        if folder.get("ids"):
             for _id in folder.get("ids", []):
                 url = f"{base}{_id}"
                 out = download(url, target_dir, headers)
                 if not out:
-                    print(f"[COMFY AUTO SETUP] Failed CivitAI download for ID {_id}")
+                    log(f"Failed CivitAI download for ID {_id}")
 
     else:
-        print(f"[COMFY AUTO SETUP] Unknown source '{src}' → skipped")
+        log(f"Unknown source '{src}' → skipped")

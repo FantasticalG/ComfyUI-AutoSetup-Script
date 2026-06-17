@@ -5,7 +5,7 @@
 # Deploys ComfyUI resources based on config/resources.yaml
 # --------------------------------------------------------------
 
-set -e
+set -eo pipefail
 source "$(dirname "$0")/helper/lib_common.sh"
 ensure_python
 

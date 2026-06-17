@@ -5,7 +5,7 @@
 # Clones or updates ComfyUI to match the $SETUP_DATE
 # ----------------------------------------------------
 
-set -e
+set -eo pipefail
 source "$(dirname "$0")/helper/lib_common.sh"
 
 ensure_git; ensure_python

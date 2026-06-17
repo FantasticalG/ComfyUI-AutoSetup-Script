@@ -6,7 +6,7 @@
 # -------------------------------------------------------
 
 # Usage: get_commit_for_repo.sh <repo_path> <date>
-set -e
+set -eo pipefail
 
 repo="$1"
 date="$2"
@@ -14,9 +14,10 @@ date="$2"
 # Fetch full remote history (fixes shallow and detached-head issues)
 git -C "$repo" fetch --prune --quiet
 
-# Determine remote default branch (origin/HEAD → origin/main/master)
+# Determine remote default branch (origin/HEAD → origin/main/master).
+# `|| true` keeps the fallback below working under pipefail when origin/HEAD is unset.
 remote_ref=$(git -C "$repo" symbolic-ref --quiet refs/remotes/origin/HEAD 2>/dev/null \
-             | sed 's|^refs/remotes/||')
+             | sed 's|^refs/remotes/||' || true)
 # Fallbacks
 if [[ -z "${remote_ref:-}" ]]; then
   if git -C "$repo" rev-parse --verify --quiet origin/main; then

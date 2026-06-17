@@ -5,7 +5,7 @@
 # Installs ComfyUI extensions based on config/extensions.yaml
 # --------------------------------------------------------------
 
-set -e
+set -eo pipefail
 source "$(dirname "$0")/helper/lib_common.sh"
 
 EXT_DIR="$INSTALL_DIR/custom_nodes"
@@ -37,7 +37,7 @@ while IFS= read -r url; do
   # non-fatal: one extension's deps (e.g. CUDA-only packages such as
   # onnxruntime-gpu on macOS) shouldn't abort the whole install. We warn and
   # record it so it's visible, then continue with the next extension.
-  if [ -f "$target/requirements.txt" ]; then
+  if [[ -f "$target/requirements.txt" ]]; then
     if ! pip_install_quiet -r "$target/requirements.txt"; then
       log "WARNING: requirements failed for '$name' — continuing. The node may not work until its dependencies are installed."
       FAILED_REQS+=("$name")
@@ -48,7 +48,7 @@ while IFS= read -r url; do
 
 done <<< "$EXT_URLS"
 
-if [ "${#FAILED_REQS[@]}" -gt 0 ]; then
+if [[ "${#FAILED_REQS[@]}" -gt 0 ]]; then
   log "Extensions with FAILED requirements (review the log above): ${FAILED_REQS[*]}"
 fi
 
