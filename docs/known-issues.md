@@ -10,17 +10,6 @@ Items are grouped by area and roughly ordered by impact. **Fixed** items are kep
 
 ## Reliability / correctness
 
-### ✅ CLI flags ignored by `install_all.sh` — *fixed*
-Previously, flags like `--comfy-dir` / `--date` passed to `install_all.sh` were parsed only for
-the orchestrator and not propagated to the step scripts (which run as separate `bash` processes
-and re-derived defaults). Fixed by exporting the resolved values as canonical env vars
-(`COMFY_DIR`, `TARGET_DATE`, …) in [lib_common.sh](../scripts/helper/lib_common.sh).
-
-### ✅ Failed `pip install` masked by log filter — *fixed*
-The `pip install ... | awk '!/already satisfied/'` pattern hid pip's exit status (no `pipefail`),
-so dependency-install failures were swallowed and the script still reported success. Fixed by
-adding `set -o pipefail` in [lib_common.sh](../scripts/helper/lib_common.sh).
-
 ### Interrupted downloads corrupt silently and are never re-fetched
 [install_models.py](../scripts/helper/install_models.py) writes directly to the final file and
 skips downloads based purely on **file existence**. If a download is interrupted (network drop,
@@ -62,14 +51,6 @@ and `flash_attn` import breaks.
 ---
 
 ## Security
-
-### Open, unauthenticated services (documented)
-JupyterLab runs with no token/password and `allow_origin='*'`; both Jupyter (8888) and ComfyUI
-(8188) bind `0.0.0.0`. Reaching 8888 = arbitrary code execution on the host. Safe only behind
-RunPod's authenticated proxy or a trusted network. This is now called out in the container
-[README](https://github.com/FantasticalG/ComfyUI-AutoSetup-RunPod-Container#accessing-the-services).
-- **Planned:** default to a generated Jupyter token (overridable), and document binding to
-  loopback for local use.
 
 ### API keys passed via argv
 [install_models.sh](../scripts/install_models.sh) passes the HuggingFace/CivitAI tokens as
