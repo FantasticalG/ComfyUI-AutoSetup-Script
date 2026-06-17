@@ -27,27 +27,12 @@ while IFS= read -r url; do
 
   target="$EXT_DIR/$name"
 
-  # Remove partial/broken clone folders
-  if [ -d "$target" ] && [ ! -d "$target/.git" ]; then
-    log "[COMFYUI AUTO SETUP] Removing incomplete clone at $target"
-    rm -rf "$target"
-  fi
-
-  # Clone if not checked out yet
-  if [ ! -d "$target/.git" ]; then
-    git clone "$url" "$target"
-  fi
-
-  # Check out target commit based on the setup date
-  commit=$(bash "$REPO_ROOT/scripts/helper/get_commit_for_repo.sh" "$target" "$SETUP_DATE")
-  git -C "$target" -c advice.detachedHead=false checkout "$commit"
+  # Clone/update the extension and check out the commit matching the setup date
+  commit=$(clone_or_checkout "$url" "$target" "$SETUP_DATE")
 
   # Install extension-specific requirements if present
   if [ -f "$target/requirements.txt" ]; then
-    {
-      python3 -m pip install -r "$target/requirements.txt" 2>&1 \
-        | awk '!/already satisfied/' # skip already satisfied warning
-    } >&2
+    pip_install_quiet -r "$target/requirements.txt"
   fi
 
   log "$name ready @ $commit"

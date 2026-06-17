@@ -50,3 +50,49 @@ export CIVITAI_API_KEY="$CIVITAI_KEY"
 # Dependency checks (base system expected to have git/python preinstalled)
 ensure_git() { command -v git >/dev/null || { log "git missing"; exit 1; }; }
 ensure_python() { command -v python3 >/dev/null || { log "python3 missing"; exit 1; }; }
+
+# Clone a repo if needed, then check out the commit matching the given date.
+# Echoes the resolved commit hash on stdout; all other output goes to stderr so
+# callers can capture the hash with:  commit=$(clone_or_checkout url dir date)
+#
+# SAFETY: this function never deletes anything. If the target exists but is not a
+# git repository AND is not empty, it ABORTS instead of removing it.
+# Usage: clone_or_checkout <git-url> <target-dir> <date>
+clone_or_checkout() {
+  local url="$1" target="$2" date="$3" commit
+
+  if [ -z "$target" ]; then
+    log "clone_or_checkout: empty target path — refusing." >&2
+    return 1
+  fi
+
+  # Clone only when there is no git repo there yet.
+  if [ ! -d "$target/.git" ]; then
+    # Never touch a populated, non-git directory — abort loudly instead.
+    if [ -d "$target" ] && [ -n "$(ls -A "$target" 2>/dev/null)" ]; then
+      log "ERROR: '$target' exists, is not a git repository, and is not empty." >&2
+      log "       Refusing to modify it. If it is a stale/partial clone, remove it" >&2
+      log "       manually and re-run. (No files were deleted.)" >&2
+      return 1
+    fi
+    # Safe: target is missing or an empty dir, which 'git clone' handles.
+    git clone "$url" "$target" >&2
+  fi
+
+  # Check out the commit matching the setup date.
+  commit=$(bash "$REPO_ROOT/scripts/helper/get_commit_for_repo.sh" "$target" "$date")
+  if [ -z "$commit" ]; then
+    log "ERROR: no commit found at/before $date for $target" >&2
+    return 1
+  fi
+  git -C "$target" -c advice.detachedHead=false checkout "$commit" >&2
+
+  echo "$commit"
+}
+
+# Run `pip install`, dropping noisy "already satisfied" lines and sending all
+# output to stderr. With pipefail (set above) a pip failure still propagates.
+# Usage: pip_install_quiet <pip-install-args...>
+pip_install_quiet() {
+  python3 -m pip install "$@" 2>&1 | awk '!/already satisfied/' >&2
+}
