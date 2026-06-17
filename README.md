@@ -144,6 +144,7 @@ See [docs/workflows.md](docs/workflows.md) for the catalog of bundled workflows.
 - [docs/configuration.md](docs/configuration.md) — full YAML schema reference for all three config files.
 - [docs/architecture.md](docs/architecture.md) — install pipeline, helper scripts, and the deterministic-versioning design.
 - [docs/workflows.md](docs/workflows.md) — catalog of the bundled workflows.
+- [docs/known-issues.md](docs/known-issues.md) — known limitations, rough edges, and planned improvements.
 
 ## License
 
