@@ -108,6 +108,36 @@ civitai: "xxxxxxxx"
 - Get a HuggingFace token: <https://huggingface.co/settings/tokens> (read scope is enough).
 - Get a CivitAI token: account settings → **API Keys** at <https://civitai.com/user/account>.
 
+### Skipping models (`SKIP_MODELS`)
+
+To install only a subset without editing `models.yaml`, set the **`SKIP_MODELS`** env
+var or the **`--skip-models`** flag to a filter. Default (unset/empty) downloads
+everything.
+
+**Syntax** — keyword groups:
+- `;` separates groups (**OR** between groups).
+- `,` separates keywords within a group (**AND** within a group).
+
+A model is **skipped** when its URL/filename contains **all** keywords of **any** group.
+Matching is **case-insensitive substring**.
+
+```bash
+# Skip WAN-Animate models AND everything Qwen:
+./scripts/install_models.sh --skip-models "wan,animate;qwen"
+
+# Same via environment variable:
+SKIP_MODELS="wan,animate;qwen" ./scripts/install_all.sh
+```
+
+| Filter | Effect |
+|--------|--------|
+| `wan` | skip every model whose URL/name contains `wan` |
+| `wan,animate` | skip only models containing **both** `wan` and `animate` |
+| `wan,animate;qwen` | skip WAN-Animate models **and** all Qwen models |
+| *(empty / unset)* | download everything (default) |
+
+**What is matched (and a caveat):** keywords are tested against the **URL/filename**. CivitAI entries are matched against the **resolved filename** from the response headers, so they are still skipped without downloading the file body.
+
 ---
 
 ## resources.yaml

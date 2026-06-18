@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # ------------------------------------------------------------------
-# install_models.py 
+# install_models.py
 # Download models / LoRAs from HuggingFace or CivitAI into ComfyUI
 # ------------------------------------------------------------------
 
@@ -13,26 +13,30 @@ def log(msg):
     print(f"[COMFY AUTO SETUP] {msg}")
 
 
-# --- Args ---
-if len(sys.argv) < 3:
-    print("Usage: install_models.py <config.yaml> <install_dir>")
-    sys.exit(1)
+# --- Skip filter (pure, no I/O) ---
+# SKIP_MODELS holds keyword groups: ';' separates groups, ',' separates keywords
+# within a group. A model is skipped when its URL/filename contains ALL keywords
+# of ANY group (case-insensitive substring). Empty/unset = skip nothing.
+def parse_skip_groups(spec):
+    groups = []
+    for group in (spec or "").split(";"):
+        words = [w.strip().lower() for w in group.split(",") if w.strip()]
+        if words:  # drop empty groups so a stray ';' never matches everything
+            groups.append(words)
+    return groups
 
-config_file, install_dir, hf_key, civitai_key, local_key_file = sys.argv[1:6]
 
-# --- Load config + optional local key file ---
-with open(config_file) as f:
-    cfg = yaml.safe_load(f)
-local_keys = yaml.safe_load(open(local_key_file)) if os.path.exists(local_key_file) else {}
+def matches_skip(text, groups):
+    t = (text or "").lower()
+    return any(all(word in t for word in group) for group in groups)
 
-# --- Resolve API keys ---
-api_keys = {
-    "huggingface": hf_key or local_keys.get("huggingface", "") or "",
-    "civitai": civitai_key or local_keys.get("civitai", "") or ""
-}
 
-# --- Helper: download with filename auto-detection and progress info  ---
-def download(url, dst_dir, headers, retries=3, step_percent=10):
+# Sentinel returned by download() when a file was filtered out (not an error).
+FILTERED = object()
+
+
+# --- Helper: download with filename auto-detection and progress info ---
+def download(url, dst_dir, headers, skip_groups=(), retries=3, step_percent=10):
     is_tty = sys.stdout.isatty() # runpod can not re-render lines to update progress
     for attempt in range(1, retries + 1):
         try:
@@ -45,6 +49,12 @@ def download(url, dst_dir, headers, retries=3, step_percent=10):
                     fname = cd.split("filename=")[-1].strip().strip('"').rstrip(';').strip('"')
                 else:
                     fname = os.path.basename(r.url.split("?")[0])
+
+                # Skip filter on the resolved filename (covers CivitAI, whose URL is
+                # only a numeric id) — abort before downloading the body.
+                if matches_skip(fname, skip_groups):
+                    log(f"SKIP (filter) - {fname}")
+                    return FILTERED
 
                 dst_path = os.path.join(dst_dir, fname)
                 if os.path.exists(dst_path):
@@ -75,8 +85,8 @@ def download(url, dst_dir, headers, retries=3, step_percent=10):
                                 # single-line progress bar for real terminals
                                 sys.stdout.write(f"\r[{'#'*done}{'.'*(bar_width-done)}] {percent}%")
                                 sys.stdout.flush()
-                            else: 
-                                # RunPod-safe stepped logging 
+                            else:
+                                # RunPod-safe stepped logging
                                 if percent >= next_step:
                                     sys.stdout.write(f"[{'#'*done}{'.'*(bar_width-done)}] {percent}%\n")
                                     sys.stdout.flush()
@@ -91,32 +101,66 @@ def download(url, dst_dir, headers, retries=3, step_percent=10):
             time.sleep(2)
     return None
 
-# --- Process folders ---
-for folder in cfg.get("folders", []):
-    src = folder.get("source", "").lower()
-    key = api_keys.get(src, "")
-    headers = {"Authorization": f"Bearer {key}"} if key else {}
-    target_dir = os.path.join(install_dir, folder["target"])
-    os.makedirs(target_dir, exist_ok=True)
 
-    if src == "huggingface":
-        if folder.get("urls"):
-            for url in folder.get("urls", []):
-                fname = os.path.basename(url)
-                path = os.path.join(target_dir, fname)
-                if os.path.exists(path):
-                    log(f"SKIP - {fname} already exists")
-                    continue
-                download(url, target_dir, headers)
+def main():
+    # --- Args ---
+    if len(sys.argv) < 6:
+        print("Usage: install_models.py <config.yaml> <install_dir> <hf_key> <civitai_key> <local_keys.yaml>")
+        sys.exit(1)
 
-    elif src == "civitai":
-        base = "https://civitai.com/api/download/models/"
-        if folder.get("ids"):
-            for _id in folder.get("ids", []):
-                url = f"{base}{_id}"
-                out = download(url, target_dir, headers)
-                if not out:
-                    log(f"Failed CivitAI download for ID {_id}")
+    config_file, install_dir, hf_key, civitai_key, local_key_file = sys.argv[1:6]
 
-    else:
-        log(f"Unknown source '{src}' → skipped")
+    # --- Load config + optional local key file ---
+    with open(config_file) as f:
+        cfg = yaml.safe_load(f)
+    local_keys = yaml.safe_load(open(local_key_file)) if os.path.exists(local_key_file) else {}
+
+    # --- Resolve API keys ---
+    api_keys = {
+        "huggingface": hf_key or local_keys.get("huggingface", "") or "",
+        "civitai": civitai_key or local_keys.get("civitai", "") or ""
+    }
+
+    # --- Resolve skip filter (exported by lib_common.sh) ---
+    skip_groups = parse_skip_groups(os.environ.get("SKIP_MODELS", ""))
+    if skip_groups:
+        log(f"Model skip filter active: {skip_groups}")
+
+    # --- Process folders ---
+    for folder in cfg.get("folders", []):
+        src = folder.get("source", "").lower()
+        key = api_keys.get(src, "")
+        headers = {"Authorization": f"Bearer {key}"} if key else {}
+        target_dir = os.path.join(install_dir, folder["target"])
+        os.makedirs(target_dir, exist_ok=True)
+
+        if src == "huggingface":
+            if folder.get("urls"):
+                for url in folder.get("urls", []):
+                    fname = os.path.basename(url)
+                    # Skip filter on the full URL (includes the filename for HF) —
+                    # skipped before any network request.
+                    if matches_skip(url, skip_groups):
+                        log(f"SKIP (filter) - {fname}")
+                        continue
+                    path = os.path.join(target_dir, fname)
+                    if os.path.exists(path):
+                        log(f"SKIP - {fname} already exists")
+                        continue
+                    download(url, target_dir, headers, skip_groups)
+
+        elif src == "civitai":
+            base = "https://civitai.com/api/download/models/"
+            if folder.get("ids"):
+                for _id in folder.get("ids", []):
+                    url = f"{base}{_id}"
+                    out = download(url, target_dir, headers, skip_groups)
+                    if out is None:
+                        log(f"Failed CivitAI download for ID {_id}")
+
+        else:
+            log(f"Unknown source '{src}' → skipped")
+
+
+if __name__ == "__main__":
+    main()

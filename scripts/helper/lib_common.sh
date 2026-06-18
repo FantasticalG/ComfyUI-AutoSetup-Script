@@ -27,6 +27,9 @@ INSTALL_DIR="${COMFY_DIR:-$PWD/ComfyUI}"
 HF_KEY="${HUGGINGFACE_API_KEY:-}"
 CIVITAI_KEY="${CIVITAI_API_KEY:-}"
 
+# Optional model-download skip filter (can be overridden with SKIP_MODELS)
+SKIP_MODELS="${SKIP_MODELS:-}"
+
 # Parse command line arguments
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
@@ -34,6 +37,7 @@ while [[ "$#" -gt 0 ]]; do
     --date) SETUP_DATE="$2"; shift ;;
     --hf-key) HF_KEY="$2"; shift ;;
     --civitai-key) CIVITAI_KEY="$2"; shift ;;
+    --skip-models) SKIP_MODELS="$2"; shift ;;
   esac
   shift
 done
@@ -46,6 +50,7 @@ export COMFY_DIR="$INSTALL_DIR"
 export TARGET_DATE="$SETUP_DATE"
 export HUGGINGFACE_API_KEY="$HF_KEY"
 export CIVITAI_API_KEY="$CIVITAI_KEY"
+export SKIP_MODELS="$SKIP_MODELS"
 
 # Dependency checks (base system expected to have git/python preinstalled)
 ensure_git() { command -v git >/dev/null || { log "git missing"; exit 1; }; }
