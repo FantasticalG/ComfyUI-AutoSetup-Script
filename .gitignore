@@ -1,6 +1,13 @@
+# Project
 ComfyUI/
 python_venv/
 local/
 
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Mac
 .DS_Store
 */.DS_Store
