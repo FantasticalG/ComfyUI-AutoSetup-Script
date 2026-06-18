@@ -27,8 +27,11 @@ INSTALL_DIR="${COMFY_DIR:-$PWD/ComfyUI}"
 HF_KEY="${HUGGINGFACE_API_KEY:-}"
 CIVITAI_KEY="${CIVITAI_API_KEY:-}"
 
-# Optional model-download skip filter (can be overridden with SKIP_MODELS)
-SKIP_MODELS="${SKIP_MODELS:-}"
+# Optional model-download skip filters (see docs/configuration.md):
+#   SKIP_MODEL_FILES — skip individual models by URL/filename
+#   SKIP_MODEL_DIRS  — skip whole target folders by their final folder name
+SKIP_MODEL_FILES="${SKIP_MODEL_FILES:-}"
+SKIP_MODEL_DIRS="${SKIP_MODEL_DIRS:-}"
 
 # Parse command line arguments
 while [[ "$#" -gt 0 ]]; do
@@ -37,7 +40,8 @@ while [[ "$#" -gt 0 ]]; do
     --date) SETUP_DATE="$2"; shift ;;
     --hf-key) HF_KEY="$2"; shift ;;
     --civitai-key) CIVITAI_KEY="$2"; shift ;;
-    --skip-models) SKIP_MODELS="$2"; shift ;;
+    --skip-model-files) SKIP_MODEL_FILES="$2"; shift ;;
+    --skip-model-dirs) SKIP_MODEL_DIRS="$2"; shift ;;
   esac
   shift
 done
@@ -50,7 +54,8 @@ export COMFY_DIR="$INSTALL_DIR"
 export TARGET_DATE="$SETUP_DATE"
 export HUGGINGFACE_API_KEY="$HF_KEY"
 export CIVITAI_API_KEY="$CIVITAI_KEY"
-export SKIP_MODELS="$SKIP_MODELS"
+export SKIP_MODEL_FILES="$SKIP_MODEL_FILES"
+export SKIP_MODEL_DIRS="$SKIP_MODEL_DIRS"
 
 # Dependency checks (base system expected to have git/python preinstalled)
 ensure_git() { command -v git >/dev/null || { log "git missing"; exit 1; }; }

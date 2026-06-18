@@ -111,7 +111,8 @@ CLI arguments override environment variables, which override the defaults.
 | `TARGET_DATE` | `--date <yyyy-mm-dd>` | Commit date for deterministic installs | date of the latest commit in this repo |
 | `HUGGINGFACE_API_KEY` | `--hf-key <key>` | HuggingFace download token | not set |
 | `CIVITAI_API_KEY` | `--civitai-key <key>` | CivitAI download token | not set |
-| `SKIP_MODELS` | `--skip-models <filter>` | Skip models whose URL/filename matches the filter | not set (download all) |
+| `SKIP_MODEL_FILES` | `--skip-model-files <filter>` | Skip individual models whose URL/filename matches the filter | not set (download all) |
+| `SKIP_MODEL_DIRS` | `--skip-model-dirs <names>` | Skip whole target folders by final folder name (`;`-separated) | not set (download all) |
 
 API keys may also be stored in `local/local_keys.yaml`, relative to your current working directory (`$PWD`):
 
@@ -126,7 +127,11 @@ Resolution order per source: **CLI flag → environment variable → local keys 
 
 - **Add/remove an extension:** edit [config/extensions.yaml](config/extensions.yaml) and re-run `install_ext.sh`.
 - **Add/remove models:** edit [config/models.yaml](config/models.yaml) and re-run `install_models.sh`. Comment out model families you don't need to save bandwidth and disk.
-- **Skip models without editing config:** set `SKIP_MODELS` / `--skip-models` to a filter of keyword groups (`;` = OR between groups, `,` = AND within a group). A model is skipped when its URL/filename contains all keywords of any group. Example: `--skip-models "wan,animate;qwen"` skips WAN-Animate models and all Qwen models. Matching is case-insensitive substring on the **URL/filename**. See [docs/configuration.md](docs/configuration.md#skipping-models-skip_models).
+- **Skip models without editing config:** two independent filters (default empty = install all):
+  - `SKIP_MODEL_FILES` / `--skip-model-files` — by **URL/filename**: keyword groups (`;` = OR, `,` = AND within a group), case-insensitive substring. E.g. `"wan,t2v;qwen"` skips WAN-T2V files and every file with `qwen` in its URL.
+  - `SKIP_MODEL_DIRS` / `--skip-model-dirs` — by **target folder**: `;`-separated folder names matched against the final folder segment (exact, case-insensitive). E.g. `"qwen;sdxl"` skips the `…/qwen` and `…/sdxl` folders entirely.
+
+  See [docs/configuration.md](docs/configuration.md#skipping-models).
 - **Ship your own workflows:** drop `.json` files into [resources/workflows/](resources/workflows) and re-run `install_resources.sh`.
 
 See [docs/workflows.md](docs/workflows.md) for the catalog of bundled workflows.

@@ -16,10 +16,10 @@ def log(msg):
     print(f"[COMFY AUTO SETUP] {msg}")
 
 
-# --- Skip filter (pure, no I/O) ---
-# SKIP_MODELS holds keyword groups: ';' separates groups, ',' separates keywords
-# within a group. A model is skipped when its URL/filename contains ALL keywords
-# of ANY group (case-insensitive substring). Empty/unset = skip nothing.
+# --- Skip filters (pure, no I/O) ---
+# SKIP_MODEL_FILES holds keyword groups: ';' separates groups, ',' separates
+# keywords within a group. A model is skipped when its URL/filename contains ALL
+# keywords of ANY group (case-insensitive substring). Empty/unset = skip nothing.
 def parse_skip_groups(spec):
     groups = []
     for group in (spec or "").split(";"):
@@ -32,6 +32,17 @@ def parse_skip_groups(spec):
 def matches_skip(text, groups):
     t = (text or "").lower()
     return any(all(word in t for word in group) for group in groups)
+
+
+# SKIP_MODEL_DIRS holds folder names separated by ';'. A whole folder entry is
+# skipped when the final segment of its target path equals any name (case-
+# insensitive). Empty/unset = skip nothing.
+def parse_dir_filters(spec):
+    return {w.strip().lower() for w in (spec or "").split(";") if w.strip()}
+
+
+def dir_skipped(target, dir_filters):
+    return os.path.basename((target or "").rstrip("/")).lower() in dir_filters
 
 
 def main():
@@ -53,29 +64,37 @@ def main():
         "civitai": civitai_key or local_keys.get("civitai", "") or ""
     }
 
-    # --- Resolve skip filter (exported by lib_common.sh) ---
-    skip_groups = parse_skip_groups(os.environ.get("SKIP_MODELS", ""))
-    if skip_groups:
-        log(f"Model skip filter active: {skip_groups}")
+    # --- Resolve skip filters (exported by lib_common.sh) ---
+    file_groups = parse_skip_groups(os.environ.get("SKIP_MODEL_FILES", ""))
+    dir_filters = parse_dir_filters(os.environ.get("SKIP_MODEL_DIRS", ""))
+    if file_groups:
+        log(f"Skip-file filter active: {file_groups}")
+    if dir_filters:
+        log(f"Skip-dir filter active: {sorted(dir_filters)}")
 
     def should_skip(name):
-        return matches_skip(name, skip_groups)
+        return matches_skip(name, file_groups)
 
     failed = []  # names that could not be downloaded after all retries
 
     # --- Process folders ---
     for folder in cfg.get("folders", []):
+        target = folder["target"]
+        # Folder-level skip: drop the whole entry if its final folder name matches.
+        if dir_skipped(target, dir_filters):
+            log(f"SKIP (dir) - {target}")
+            continue
         src = folder.get("source", "").lower()
         key = api_keys.get(src, "")
         headers = {"Authorization": f"Bearer {key}"} if key else {}
-        target_dir = os.path.join(install_dir, folder["target"])
+        target_dir = os.path.join(install_dir, target)
         os.makedirs(target_dir, exist_ok=True)
 
         if src == "huggingface":
             for url in folder.get("urls") or []:
                 fname = os.path.basename(url)
                 # Filter on the full URL (includes the filename for HF) before any request.
-                if matches_skip(url, skip_groups):
+                if matches_skip(url, file_groups):
                     log(f"SKIP (filter) - {fname}")
                     continue
                 # Cheap local check so re-runs don't even probe the network.

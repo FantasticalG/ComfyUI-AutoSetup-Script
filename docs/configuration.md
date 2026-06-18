@@ -76,7 +76,7 @@ folders:
 - Downloads are **robust** ([downloader.py](../scripts/helper/downloader.py)): each file streams to a `.part` temp file, **resumes** where it left off on retry (HTTP `Range`, with a clean restart if the server ignores it), is **size-verified** against `Content-Length`, and only then **atomically renamed** into place — so an interrupted transfer never leaves a truncated file that looks complete. Each download retries up to 3 times; anything still failing is removed (no broken `.part`) and listed in an end-of-run **failure summary**. Progress prints as a live bar on a TTY and stepped percentage lines in non-TTY logs (e.g. RunPod).
 - Multiple entries may point at the **same** `target` — this is used throughout `models.yaml` to group families (e.g. several `models/diffusion_models/wan22` blocks).
 
-The shipped `models.yaml` covers several model families. They are independent — comment out blocks you do not need to save bandwidth and disk:
+The shipped `models.yaml` covers several model families.
 
 | Family | Example targets |
 |--------|-----------------|
@@ -87,8 +87,6 @@ The shipped `models.yaml` covers several model families. They are independent �
 | Z-Image / Z-Image Turbo | `models/{vae,text_encoders,diffusion_models,model_patches}/zimage` |
 | WAN 2.2 (T2V/I2V/TI2V, Fun Control, S2V) | `models/{vae,text_encoders,clip_vision,audio_encoders,diffusion_models,loras}/wan22` |
 | MMAudio (video-to-audio) | `models/mmaudio` |
-
-> Note: targets such as the RIFE checkpoints are written **inside** a `custom_nodes/` extension folder, so that extension must be installed first. The default pipeline installs extensions before models, so ordering is handled for you.
 
 ### API keys
 
@@ -108,35 +106,52 @@ civitai: "xxxxxxxx"
 - Get a HuggingFace token: <https://huggingface.co/settings/tokens> (read scope is enough).
 - Get a CivitAI token: account settings → **API Keys** at <https://civitai.com/user/account>.
 
-### Skipping models (`SKIP_MODELS`)
+### Skipping models
 
-To install only a subset without editing `models.yaml`, set the **`SKIP_MODELS`** env
-var or the **`--skip-models`** flag to a filter. Default (unset/empty) downloads
-everything.
+Two independent filters let you install only a subset without editing `models.yaml`.
+Both default to empty (download everything) and can be set via env var or CLI flag.
+They combine: a model downloads only if **neither** filter skips it.
 
-**Syntax** — keyword groups:
-- `;` separates groups (**OR** between groups).
-- `,` separates keywords within a group (**AND** within a group).
+#### By file — `SKIP_MODEL_FILES` / `--skip-model-files`
 
-A model is **skipped** when its URL/filename contains **all** keywords of **any** group.
-Matching is **case-insensitive substring**.
+Matches the model **URL/filename**. Keyword groups: `;` separates groups (**OR**), `,`
+separates keywords within a group (**AND**). A model is skipped when its URL/filename
+contains **all** keywords of **any** group (case-insensitive substring).
 
 ```bash
-# Skip WAN-Animate models AND everything Qwen:
-./scripts/install_models.sh --skip-models "wan,animate;qwen"
-
-# Same via environment variable:
-SKIP_MODELS="wan,animate;qwen" ./scripts/install_all.sh
+# Skip WAN t2v files AND every file with "qwen" in the URL:
+./scripts/install_models.sh --skip-model-files "wan,t2v;qwen"
+SKIP_MODEL_FILES="wan,t2v;qwen" ./scripts/install_all.sh
 ```
 
 | Filter | Effect |
 |--------|--------|
 | `wan` | skip every model whose URL/name contains `wan` |
-| `wan,animate` | skip only models containing **both** `wan` and `animate` |
-| `wan,animate;qwen` | skip WAN-Animate models **and** all Qwen models |
-| *(empty / unset)* | download everything (default) |
+| `wan,t2v` | skip only models containing **both** `wan` and `t2v` |
+| `wan,t2v;qwen` | skip WAN-T2V files **and** all `qwen` files |
 
-**What is matched (and a caveat):** keywords are tested against the **URL/filename**. CivitAI entries are matched against the **resolved filename** from the response headers, so they are still skipped without downloading the file body.
+CivitAI entries (numeric-id URLs) are matched against the **resolved filename** from the
+response headers, so they are skipped without downloading the file body.
+
+#### By folder — `SKIP_MODEL_DIRS` / `--skip-model-dirs`
+
+Matches the **target folder**. A `;`-separated list of folder names; a whole folder
+entry is skipped when the **final segment** of its `target` equals a name — exact and
+case-insensitive (so `image` does **not** match `zimage`, `audio` does **not** match
+`mmaudio`). Because `models.yaml` groups families into same-named subfolders
+(`…/qwen`, `…/wan22`, `…/sdxl`, `…/zimage`, `…/mmaudio`), one keyword drops a whole family.
+
+```bash
+# Skip the entire qwen and sdxl folders:
+./scripts/install_models.sh --skip-model-dirs "qwen;sdxl"
+SKIP_MODEL_DIRS="qwen;sdxl" ./scripts/install_all.sh
+```
+
+| Filter | Effect |
+|--------|--------|
+| `qwen` | skip every `…/qwen` folder (vae, loras, diffusion_models, text_encoders, controlnet) |
+| `qwen;sdxl` | skip all `…/qwen` and `…/sdxl` folders |
+| `mmaudio` | skip `models/mmaudio` (exact — `audio` would not match) |
 
 ---
 
