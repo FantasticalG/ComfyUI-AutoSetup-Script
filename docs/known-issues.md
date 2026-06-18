@@ -10,16 +10,6 @@ Items are grouped by area and roughly ordered by impact. **Fixed** items are kep
 
 ## Reliability / correctness
 
-### Interrupted downloads corrupt silently and are never re-fetched
-[install_models.py](../scripts/helper/install_models.py) writes directly to the final file and
-skips downloads based purely on **file existence**. If a download is interrupted (network drop,
-container OOM/kill — common on RunPod with multi-GB files), the partial file remains and is
-treated as complete on every later run.
-- **Planned fix:** download to a `.part` temp file, validate size against `Content-Length`, then
-  rename on success. Optionally support resume via HTTP `Range`.
-- **Workaround:** if a model misbehaves, delete the file in its target folder and re-run
-  `install_models.sh` to force a fresh download.
-
 ### No checksum / integrity verification
 Even a complete download isn't validated against a known hash. Low priority, but worth adding
 optional `sha256` checks for critical models.

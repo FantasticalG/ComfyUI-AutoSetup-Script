@@ -2,10 +2,13 @@
 
 # ------------------------------------------------------------------
 # install_models.py
-# Download models / LoRAs from HuggingFace or CivitAI into ComfyUI
+# Download models / LoRAs from HuggingFace or CivitAI into ComfyUI.
+# Orchestration only — the robust download mechanism lives in downloader.py.
 # ------------------------------------------------------------------
 
-import os, sys, yaml, requests, time
+import os, sys, yaml
+
+from downloader import download_file
 
 
 # --- Logging ---
@@ -29,77 +32,6 @@ def parse_skip_groups(spec):
 def matches_skip(text, groups):
     t = (text or "").lower()
     return any(all(word in t for word in group) for group in groups)
-
-
-# Sentinel returned by download() when a file was filtered out (not an error).
-FILTERED = object()
-
-
-# --- Helper: download with filename auto-detection and progress info ---
-def download(url, dst_dir, headers, skip_groups=(), retries=3, step_percent=10):
-    is_tty = sys.stdout.isatty() # runpod can not re-render lines to update progress
-    for attempt in range(1, retries + 1):
-        try:
-            with requests.get(url, headers=headers, stream=True, timeout=60, allow_redirects=True) as r:
-                r.raise_for_status()
-
-                # --- Filename extraction from Content-Disposition ---
-                cd = r.headers.get("Content-Disposition", "")
-                if "filename=" in cd:
-                    fname = cd.split("filename=")[-1].strip().strip('"').rstrip(';').strip('"')
-                else:
-                    fname = os.path.basename(r.url.split("?")[0])
-
-                # Skip filter on the resolved filename (covers CivitAI, whose URL is
-                # only a numeric id) — abort before downloading the body.
-                if matches_skip(fname, skip_groups):
-                    log(f"SKIP (filter) - {fname}")
-                    return FILTERED
-
-                dst_path = os.path.join(dst_dir, fname)
-                if os.path.exists(dst_path):
-                    log(f"SKIP - {fname} already exists")
-                    return dst_path
-
-                # --- Progress bar setup ---
-                total = int(r.headers.get("Content-Length", 0))
-                downloaded = 0
-                chunk_size = 8192
-                bar_width = 100
-                next_step = step_percent
-
-                log(f"DOWN - {fname}")
-
-                with open(dst_path, "wb") as f:
-                    for chunk in r.iter_content(chunk_size=chunk_size):
-                        if not chunk:
-                            continue
-                        f.write(chunk)
-                        downloaded += len(chunk)
-
-                        if total > 0:
-                            percent = downloaded * 100 // total
-                            done = int(bar_width * downloaded / total)
-
-                            if is_tty:
-                                # single-line progress bar for real terminals
-                                sys.stdout.write(f"\r[{'#'*done}{'.'*(bar_width-done)}] {percent}%")
-                                sys.stdout.flush()
-                            else:
-                                # RunPod-safe stepped logging
-                                if percent >= next_step:
-                                    sys.stdout.write(f"[{'#'*done}{'.'*(bar_width-done)}] {percent}%\n")
-                                    sys.stdout.flush()
-                                    next_step += step_percent
-                if total > 0:
-                    sys.stdout.write("\n")
-                else:
-                    log("  Done (size unknown)")
-            return dst_path
-        except Exception as e:
-            log(f"Download failed ({attempt}/{retries}): {e}")
-            time.sleep(2)
-    return None
 
 
 def main():
@@ -126,6 +58,11 @@ def main():
     if skip_groups:
         log(f"Model skip filter active: {skip_groups}")
 
+    def should_skip(name):
+        return matches_skip(name, skip_groups)
+
+    failed = []  # names that could not be downloaded after all retries
+
     # --- Process folders ---
     for folder in cfg.get("folders", []):
         src = folder.get("source", "").lower()
@@ -135,31 +72,36 @@ def main():
         os.makedirs(target_dir, exist_ok=True)
 
         if src == "huggingface":
-            if folder.get("urls"):
-                for url in folder.get("urls", []):
-                    fname = os.path.basename(url)
-                    # Skip filter on the full URL (includes the filename for HF) —
-                    # skipped before any network request.
-                    if matches_skip(url, skip_groups):
-                        log(f"SKIP (filter) - {fname}")
-                        continue
-                    path = os.path.join(target_dir, fname)
-                    if os.path.exists(path):
-                        log(f"SKIP - {fname} already exists")
-                        continue
-                    download(url, target_dir, headers, skip_groups)
+            for url in folder.get("urls") or []:
+                fname = os.path.basename(url)
+                # Filter on the full URL (includes the filename for HF) before any request.
+                if matches_skip(url, skip_groups):
+                    log(f"SKIP (filter) - {fname}")
+                    continue
+                # Cheap local check so re-runs don't even probe the network.
+                if os.path.exists(os.path.join(target_dir, fname)):
+                    log(f"SKIP - {fname} already exists")
+                    continue
+                result = download_file(url, target_dir, headers, should_skip, log=log)
+                if result.status == "failed":
+                    failed.append(result.name)
 
         elif src == "civitai":
             base = "https://civitai.com/api/download/models/"
-            if folder.get("ids"):
-                for _id in folder.get("ids", []):
-                    url = f"{base}{_id}"
-                    out = download(url, target_dir, headers, skip_groups)
-                    if out is None:
-                        log(f"Failed CivitAI download for ID {_id}")
+            for _id in folder.get("ids") or []:
+                url = f"{base}{_id}"
+                result = download_file(url, target_dir, headers, should_skip, log=log)
+                if result.status == "failed":
+                    failed.append(result.name or f"CivitAI ID {_id}")
 
         else:
             log(f"Unknown source '{src}' → skipped")
+
+    # --- Summary of failures (non-fatal; mirrors the extensions summary) ---
+    if failed:
+        log(f"Models that FAILED to download ({len(failed)}):")
+        for name in failed:
+            log(f"  - {name}")
 
 
 if __name__ == "__main__":

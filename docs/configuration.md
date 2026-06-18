@@ -73,7 +73,7 @@ folders:
 - Files already present in the target folder are **skipped**, so re-running is cheap and resumable.
 - Authentication: a `Bearer` token is attached when a key is available for that source (see *API keys* below). Public files download without a key; gated/private files and most CivitAI downloads require one.
 - Filenames come from the URL, or from the `Content-Disposition` header (this is how CivitAI IDs resolve to real filenames).
-- Each download retries up to 3 times. Progress prints as a live bar on a TTY and as stepped percentage lines in non-TTY logs (e.g. RunPod).
+- Downloads are **robust** ([downloader.py](../scripts/helper/downloader.py)): each file streams to a `.part` temp file, **resumes** where it left off on retry (HTTP `Range`, with a clean restart if the server ignores it), is **size-verified** against `Content-Length`, and only then **atomically renamed** into place — so an interrupted transfer never leaves a truncated file that looks complete. Each download retries up to 3 times; anything still failing is removed (no broken `.part`) and listed in an end-of-run **failure summary**. Progress prints as a live bar on a TTY and stepped percentage lines in non-TTY logs (e.g. RunPod).
 - Multiple entries may point at the **same** `target` — this is used throughout `models.yaml` to group families (e.g. several `models/diffusion_models/wan22` blocks).
 
 The shipped `models.yaml` covers several model families. They are independent — comment out blocks you do not need to save bandwidth and disk:

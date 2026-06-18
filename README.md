@@ -13,7 +13,7 @@ A lightweight, config-driven installation system that builds a complete, reprodu
 - **Config-driven** — everything to install is declared in three YAML files; you rarely touch the scripts.
 - **Modular** — update ComfyUI, extensions, resources, or models independently.
 - **Flexible credentials** — API keys via CLI flag, environment variable, or a local file.
-- **Resumable downloads** — existing files are skipped; failed downloads retry.
+- **Robust, resumable downloads** — interrupted transfers resume where they left off and are size-verified, so a broken file is never left behind.
 
 > Looking to run this in Docker / on RunPod? See the companion [ComfyUI-AutoSetup-RunPod-Container](https://github.com/FantasticalG/ComfyUI-AutoSetup-RunPod-Container), which wraps this script in a GPU container with ComfyUI + JupyterLab.
 

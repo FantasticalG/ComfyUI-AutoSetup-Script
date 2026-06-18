@@ -49,7 +49,9 @@ explicitly asked — the user reviews and commits everything.
 - **Deterministic-date pinning:** `get_commit_for_repo.sh` resolves a target date
   to a commit; ComfyUI and extensions are pinned by date, not `HEAD`.
 - **Python helpers** (`scripts/helper/*.py`) parse YAML and do IO only; keep them
-  small and single-purpose.
+  small and single-purpose. `install_models.py` orchestrates (config/loop/filter/
+  summary) and delegates the robust transfer mechanism to `downloader.py`
+  (`download_file()` — resumable, atomic, size-verified).
 - Docs live in `README.md` + `docs/` (configuration, architecture, workflows,
   known-issues). See `docs/known-issues.md` for tracked limitations.
 
@@ -72,6 +74,16 @@ Match these conventions when adding code; the existing scripts already follow th
   human-facing output through a `log()` helper (`[COMFY AUTO SETUP]` prefix).
   Exceptions: `parse_extensions.py` prints raw URLs (machine-parsed) and
   `cuda_check.py` prints a plain diagnostics banner — leave those as-is.
+
+**Compact, clean, readable (both languages):**
+- Keep functions small and single-purpose; **separate mechanism from orchestration**
+  (e.g. `downloader.py` owns *how* to download; `install_models.py` owns *what*).
+- When one concern outgrows ~a screen, extract a focused helper (function or module)
+  rather than nesting deeper.
+- Prefer **explicit return values** (a `namedtuple`/status) over sentinel-by-convention
+  (`None`/magic objects); guard-clause and `continue`/early-return to keep nesting shallow.
+- Make scripts importable for testing: wrap top-level work in `main()` +
+  `if __name__ == "__main__":` so pure logic can be unit-tested without side effects.
 
 ## Verification & docs
 

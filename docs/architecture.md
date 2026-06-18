@@ -55,13 +55,14 @@ ComfyUI and its extensions move fast, and a node update can break a working setu
 | [lib_common.sh](../scripts/helper/lib_common.sh) | Shared env resolution, logging, dependency checks |
 | [get_commit_for_repo.sh](../scripts/helper/get_commit_for_repo.sh) | Resolve a date to a commit hash for any repo |
 | [parse_extensions.py](../scripts/helper/parse_extensions.py) | Read `extensions.yaml`, print Git URLs one per line for the shell loop |
-| [install_models.py](../scripts/helper/install_models.py) | Parse `models.yaml`; download from HuggingFace/CivitAI with skip-if-exists, retries, and TTY/non-TTY progress |
+| [install_models.py](../scripts/helper/install_models.py) | Parse `models.yaml`; orchestrate downloads from HuggingFace/CivitAI (skip filter, skip-if-exists, failure summary) |
+| [downloader.py](../scripts/helper/downloader.py) | Robust single-file download: header probe, HTTP-Range resume, `.part` temp + atomic rename, size verification, retries |
 | [install_resources.py](../scripts/helper/install_resources.py) | Parse `resources.yaml`; copy or symlink folders into ComfyUI |
 | [cuda_check.py](../scripts/helper/cuda_check.py) | Diagnostics: Python/PyTorch versions, `torch.cuda.is_available()`, device count/name, `nvidia-smi`, `torch.cuda.init()`. Run by the Docker entrypoint at boot |
 
 ## Idempotency & error handling
 
 - **ComfyUI / extensions:** a directory without a `.git` folder is treated as an incomplete clone, removed, and re-cloned. Otherwise the existing clone is reused and just re-checked-out to the dated commit.
-- **Models:** existing files are skipped; downloads retry 3× before giving up.
+- **Models:** existing (complete) files are skipped; transfers stream to a `.part` temp, resume on retry, are size-verified, then atomically renamed — so a broken file is never left behind. Retries 3× before giving up; failures are listed in an end-of-run summary.
 - **Resources:** `symlink` mode replaces the target each run; `copy` mode overwrites files in place.
 - All step scripts run under `set -e`, so a hard failure stops the pipeline rather than continuing in a broken state.
