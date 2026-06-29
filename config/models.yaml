@@ -170,6 +170,12 @@ folders:
     urls:
       - https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan2_1_VAE_bf16.safetensors
 
+# SCAIL
+  - target: models/diffusion_models
+    source: huggingface
+    urls:
+      - https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled/resolve/main/SCAIL/Wan21-14B-SCAIL-preview_fp8_e4m3fn_scaled_KJ.safetensors
+
 # MMAudio
   - target: models/mmaudio
     source: huggingface
