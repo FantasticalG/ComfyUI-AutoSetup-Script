@@ -31,6 +31,8 @@ extensions:
 # - url: https://github.com/lihaoyun6/ComfyUI-FlashVSR_Ultra_Fast      # FlashVSR Video Upscale
   - url: https://github.com/numz/ComfyUI-SeedVR2_VideoUpscaler.git     # SeedVR2 Video Upscale
   - url: https://github.com/kijai/ComfyUI-WanVideoWrapper.git          # WAN Video Wrapper 
+  - url: https://github.com/kijai/ComfyUI-SCAIL-Pose.git               # SCAIL preprocessor for WAN Video Wrapper
+  - url: https://github.com/kijai/ComfyUI-WanAnimatePreprocess.git     # ONNX for SCAIL Wan Video Wrapper
 
 # Audio
   - url: https://github.com/kijai/ComfyUI-MMAudio.git                  # Video-to-Audio 
