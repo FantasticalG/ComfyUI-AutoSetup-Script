@@ -175,6 +175,13 @@ folders:
     source: huggingface
     urls:
       - https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled/resolve/main/SCAIL/Wan21-14B-SCAIL-preview_fp8_e4m3fn_scaled_KJ.safetensors
+  - target: models/detection
+    source: huggingface
+      - https://huggingface.co/f5aiteam/ComfyUI/resolve/main/detection/vitpose-l-wholebody.onnx
+      - https://huggingface.co/onnx-community/yolov10m/resolve/main/onnx/model.onnx
+  - target: models/text_encoders
+    source: huggingface
+      - https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/umt5-xxl-enc-bf16.safetensors
 
 # MMAudio
   - target: models/mmaudio
@@ -184,4 +191,3 @@ folders:
       - https://huggingface.co/Kijai/MMAudio_safetensors/resolve/main/mmaudio_large_44k_v2_fp32.safetensors
       - https://huggingface.co/Kijai/MMAudio_safetensors/resolve/main/mmaudio_synchformer_fp32.safetensors
       - https://huggingface.co/Kijai/MMAudio_safetensors/resolve/main/mmaudio_vae_44k_fp32.safetensors
-
