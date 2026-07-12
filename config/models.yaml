@@ -184,6 +184,16 @@ folders:
     source: huggingface
     urls:
       - https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/umt5-xxl-enc-bf16.safetensors
+# FlashVSR Kijai
+  - target: models/diffusion_models/flashvsr 
+    source: huggingface
+    urls:
+      - https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/FlashVSR/Wan2_1-T2V-1_3B_FlashVSR_fp32.safetensors
+      - https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/FlashVSR/Wan2_1_FlashVSR_LQ_proj_model_bf16.safetensors
+  - target: models/vae
+    source: huggingface 
+    urls:
+      - https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/FlashVSR/Wan2_1_FlashVSR_TCDecoder_fp32.safetensors
 
 # MMAudio
   - target: models/mmaudio
